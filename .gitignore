@@ -1,2 +1,4 @@
 "venv/" 
 ".env" 
+weather_log.json 
+weather.db 
