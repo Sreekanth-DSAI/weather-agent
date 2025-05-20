@@ -1,0 +1,11 @@
+{"city": "Hyderabad", "temperature": 28.1, "condition": "Clouds", "timestamp": 1747711236}
+{"city": "Delhi", "temperature": 33.42, "condition": "Clear", "action": "enjoy_weather", "timestamp": 1747715112}
+{"city": "London", "temperature": 7.8, "condition": "Clouds", "suggestion": "LLM query failed.", "timestamp": 1747716324}
+{"city": "London", "temperature": 7.8, "condition": "Clouds", "suggestion": "LLM query failed.", "timestamp": 1747716929}
+{"city": "London", "temperature": 7.8, "condition": "Clouds", "suggestion": "Given the cool temperature and cloudy skies in London,  consider grabbing a jacket and an umbrella before heading out.", "timestamp": 1747716929}
+{"city": "London", "temperature": 9.98, "condition": "Clouds", "suggestion": "It's a chilly 9.98\u00b0C in London with clouds today.  Grab a jacket and maybe an umbrella, just in case!", "posted_to_x": false, "timestamp": 1747720830}
+{"city": "Hyderabad", "temperature": 35.36, "condition": "Clouds", "suggestion": "It's a warm and cloudy day in Hyderabad (35.36\u00b0C).  Stay hydrated and consider seeking shade to avoid overheating.", "timestamp": 1747726389, "units": "metric", "user": "user1"}
+{"city": "Delhi", "temperature": 39.99, "condition": "Clear", "suggestion": "It's a scorching 39.99\u00b0C and clear in Delhi today!  Stay hydrated and seek shade whenever possible to avoid heatstroke.", "timestamp": 1747726148, "units": "metric", "user": "user1"}
+{"city": "Hyderabad", "temperature": 34.4, "condition": "Clouds", "suggestion": "It's a warm and cloudy day in Hyderabad (34.4\u00b0C).  Stay hydrated and consider finding some shade to stay cool.", "timestamp": 1747726168, "units": "metric", "user": "anonymous"}
+{"city": "Germany", "temperature": 15.58, "condition": "Clouds", "suggestion": "It's a pleasant 15.58\u00b0C in Germany with some clouds.  Enjoy a walk in the park, or maybe grab a coffee outdoors!", "timestamp": 1747726864, "units": "metric", "user": "anonymous"}
+{"city": "Japan", "temperature": 28.51, "condition": "Clear", "suggestion": "Enjoy the beautiful clear weather!  It's a perfect day for a walk in the park or a picnic.", "timestamp": 1747726603, "units": "metric", "user": "anonymous"}

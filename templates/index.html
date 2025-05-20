@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather AI Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <!-- Login Form -->
+        <div id="login-section" class="space-y-4">
+            <h1 class="text-2xl font-bold text-center text-gray-800">Login</h1>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" value="user1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Login</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-sm hidden">Login failed. Enter a username.</p>
+        </div>
+
+        <!-- Weather Form -->
+        <div id="weather-section" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Weather AI Agent</h1>
+                <button id="logout-button" class="text-blue-600 hover:underline">Logout</button>
+            </div>
+            <form id="weather-form" class="space-y-4">
+                <div>
+                    <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                    <input type="text" id="city" name="city" placeholder="e.g., London" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div>
+                    <label for="units" class="block text-sm font-medium text-gray-700">Units</label>
+                    <select id="units" name="units" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        <option value="metric">Celsius</option>
+                        <option value="imperial">Fahrenheit</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white p-2 rounded-md hover:bg-green-700">Get Weather</button>
+            </form>
+            <div id="weather-result" class="mt-4 p-4 bg-gray-50 rounded-md hidden">
+                <h2 id="city-name" class="text-lg font-semibold"></h2>
+                <p id="temperature"></p>
+                <p id="condition"></p>
+                <p id="suggestion" class="italic"></p>
+            </div>
+            <p id="weather-error" class="text-red-500 text-sm hidden">Failed to fetch weather data.</p>
+            <!-- History Section -->
+            <div class="mt-4">
+                <button id="history-button" class="w-full bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700">Show History</button>
+                <div id="history-result" class="mt-2 space-y-2 hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:8000";
+        const loginSection = document.getElementById("login-section");
+        const weatherSection = document.getElementById("weather-section");
+        const loginForm = document.getElementById("login-form");
+        const weatherForm = document.getElementById("weather-form");
+        const loginError = document.getElementById("login-error");
+        const weatherError = document.getElementById("weather-error");
+        const weatherResult = document.getElementById("weather-result");
+        const historyButton = document.getElementById("history-button");
+        const historyResult = document.getElementById("history-result");
+        const logoutButton = document.getElementById("logout-button");
+
+        // Check if logged in
+        if (localStorage.getItem("username")) {
+            loginSection.classList.add("hidden");
+            weatherSection.classList.remove("hidden");
+        }
+
+        // Login form submission
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value.trim();
+            if (!username) {
+                loginError.textContent = "Username is required.";
+                loginError.classList.remove("hidden");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                const data = await response.json();
+                localStorage.setItem("username", data.username);
+                loginSection.classList.add("hidden");
+                weatherSection.classList.remove("hidden");
+                loginError.classList.add("hidden");
+            } catch (error) {
+                loginError.textContent = error.message || "Login failed.";
+                loginError.classList.remove("hidden");
+                console.error("Login error:", error);
+            }
+        });
+
+        // Weather form submission (POST)
+        weatherForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const city = document.getElementById("city").value.trim();
+            const units = document.getElementById("units").value;
+            if (!city) {
+                weatherError.textContent = "City name is required.";
+                weatherError.classList.remove("hidden");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/weather?units=${units}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ city })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                const data = await response.json();
+                document.getElementById("city-name").textContent = data.city;
+                document.getElementById("temperature").textContent = `Temperature: ${data.temperature}${units === "metric" ? "°C" : "°F"}`;
+                document.getElementById("condition").textContent = `Condition: ${data.condition}`;
+                document.getElementById("suggestion").textContent = `Suggestion: ${data.suggestion}`;
+                weatherResult.classList.remove("hidden");
+                weatherError.classList.add("hidden");
+            } catch (error) {
+                weatherError.textContent = error.message || "Failed to fetch weather data.";
+                weatherError.classList.remove("hidden");
+                weatherResult.classList.add("hidden");
+                console.error("Weather error:", error);
+            }
+        });
+
+        // History button
+        historyButton.addEventListener("click", async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/weather/history?limit=5`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) throw new Error("Failed to fetch history");
+                const entries = await response.json();
+                historyResult.innerHTML = entries.length
+                    ? entries.map(entry => `
+                        <div class="p-2 bg-gray-100 rounded">
+                            <p><strong>${entry.city}</strong> (${new Date(entry.timestamp * 1000).toLocaleString()})</p>
+                            <p>Temp: ${entry.temperature}${entry.units === "metric" ? "°C" : "°F"}</p>
+                            <p>Condition: ${entry.condition}</p>
+                            <p>Suggestion: ${entry.suggestion}</p>
+                            <p>User: ${entry.user}</p>
+                        </div>
+                    `).join("")
+                    : "<p>No history available.</p>";
+                historyResult.classList.remove("hidden");
+            } catch (error) {
+                historyResult.innerHTML = "<p class='text-red-500'>Error fetching history.</p>";
+                historyResult.classList.remove("hidden");
+                console.error("History error:", error);
+            }
+        });
+
+        // Logout
+        logoutButton.addEventListener("click", () => {
+            localStorage.removeItem("username");
+            loginSection.classList.remove("hidden");
+            weatherSection.classList.add("hidden");
+            weatherResult.classList.add("hidden");
+            weatherError.classList.add("hidden");
+            historyResult.classList.add("hidden");
+        });
+    </script>
+</body>
+</html>
