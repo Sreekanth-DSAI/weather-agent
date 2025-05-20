@@ -155,7 +155,7 @@ async def health_check():
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     try:
-        with open(r"C:\Users\sreek\OneDrive\Desktop\AIagent\templates\index.html", "r") as f:
+        with open("index.html", "r") as f:
             return HTMLResponse(
                 content=f.read(),
                 headers={"Cache-Control": "max-age=3600"}
